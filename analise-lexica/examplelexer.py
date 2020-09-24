@@ -1,29 +1,32 @@
 # ------------------------------------------------------------
 # Dragon book - Exercise 3.5.1 
 # ------------------------------------------------------------
-import ply.lex as lex
+import lex
 
 reserved = {
-    'if' : 'IF',
-    'then' : 'THEN',
-    'else' : 'ELSE'
+    'if': 'IF',
+    'then': 'THEN',
+    'else': 'ELSE',
+    'while': 'WHILE'
 }
 
 # List of token names.   This is always required
 tokens = [
-    'LT',
-    'LE',
-    'EQ',
-    'NE',
-    'GE',
-    'GT',
-    'ID',
-    'NUMBER',
-    'RELOP'
-] + list(reserved.values())
+             'LT',
+             'LE',
+             'EQ',
+             'NE',
+             'GE',
+             'GT',
+             'ID',
+             'NUMBER',
+             'RELOP',
+             'STRING'
+         ] + list(reserved.values())
 
 # A string containing ignored characters (spaces, tabs and newline)
-t_ignore  = ' \t\n'
+t_ignore = ' \t\n'
+
 
 def t_LE(t):
     r'<='
@@ -31,11 +34,13 @@ def t_LE(t):
     t.value = 'LE'
     return t
 
+
 def t_NE(t):
-    r'<>'
+    r'!='
     t.type = 'RELOP'
     t.value = 'NE'
     return t
+
 
 def t_GE(t):
     r'>='
@@ -43,11 +48,13 @@ def t_GE(t):
     t.value = 'GE'
     return t
 
+
 def t_LT(t):
     r'<'
     t.type = 'RELOP'
     t.value = 'LT'
     return t
+
 
 def t_GT(t):
     r'>'
@@ -55,16 +62,25 @@ def t_GT(t):
     t.value = 'GT'
     return t
 
+
 def t_EQ(t):
-    r'='
+    r'=='
     t.type = 'RELOP'
     t.value = 'EQ'
     return t
 
+
 def t_ID(t):
-    r'[a-zA-Z][a-zA-Z0-9]*'
-    t.type = reserved.get(t.value,'ID') # Check for reserved words
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value, 'ID')  # Check for reserved words
     return t
+
+
+def t_STRING(t):
+    r'"[a-zA-Z0-9_]*"'
+    t.type = 'STRING'
+    return t
+
 
 # A regular expression rule with some action code
 def t_NUMBER(t):
@@ -72,10 +88,12 @@ def t_NUMBER(t):
     t.value = int(t.value)
     return t
 
+
 # Error handling rule
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
+
 
 class Ex351Lexer:
     data = None
@@ -87,15 +105,16 @@ class Ex351Lexer:
     def setData(self, data):
         self.data = data
         self.lexer.input(data)
-        
+
     def tokenize(self):
         tokens = []
         while True:
             tok = self.lexer.token()
             if not tok:
-                break      # No more input
+                break  # No more input
             tokens.append(tok)
         return tokens
+
 
 if __name__ == '__main__':
     lex = Ex351Lexer()
